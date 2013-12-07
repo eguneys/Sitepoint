@@ -9,6 +9,7 @@ class Server
     @connections[:server] = @server
     @connections[:rooms] = @rooms
     @connections[:clients] = @clients
+    run
   end
 
   def run
@@ -21,8 +22,11 @@ class Server
             Thread.kill self
           end
         end
+        puts "#{nick_name} #{client}"
         @connections[:clients][nick_name] = client
       end
-    }
+    }.join
   end
 end
+
+Server.new( 3000, "localhost" )

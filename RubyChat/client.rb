@@ -7,6 +7,8 @@ class Client
     @response = nil
     listen
     send
+    @request.join
+    @response.join
   end
 
   def listen
@@ -21,6 +23,7 @@ class Client
   end
 
   def send
+    puts "Enter the username:"
     @request = Thread.new do
       loop {# write how much you want
         # read from the console
@@ -32,5 +35,5 @@ class Client
   end
 end
 
-server = TCPSocket.open( ip, port )
-client = Client.new( server )
+server = TCPSocket.open( "localhost", 3000 )
+Client.new( server )
