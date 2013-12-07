@@ -24,8 +24,23 @@ class Server
         end
         puts "#{nick_name} #{client}"
         @connections[:clients][nick_name] = client
+        client.puts "Connection established, thanks for join!! happy chating"
+        listen_user_messages( nick_name, client )
       end
     }.join
+  end
+
+  def listen_user_messages( username, client )
+    loop {
+      msg = client.gets.chomp
+      # send a broadcast message, a message for all connected users, but not to
+      # its self
+      @connections[:clients].each do |other_name, other_client|
+        unless other_name == username
+          other_client.puts "#{username.to_s}: #{msg}"
+        end
+      end
+    }
   end
 end
 
