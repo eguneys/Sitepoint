@@ -1,16 +1,19 @@
 # TCP Ruby Chat
 Hi, my name is Simon Escobar and we are going to build a little TCP ruby chat
-using the ruby standard library Socket, I'm using ruby 2.0.0 so lets begin.
+using the ruby standard library Socket, I'm using ruby 2.0.0, and Ubuntu
+Linux 12.04LTS, but it should work on Mac OS too, not sure if in windows
 
 First we are going to create the necessary files:
     'server.rb'
     'client.rb'
 In server.rb and client.rb we have to require the socket library
+
 ```ruby
 require "socket"
 ```
 then create the respective classes with some attributes to handle users and
 rooms
+
 ```ruby
 class Client
   def initialize server
@@ -35,11 +38,12 @@ then, initialize a request and response instance variables for sending and recei
 messages.
 
 The server receive a port which is our channel for establishing a connection between
-users, so it can listen the port for any event and send a response to everybody who
+users, so it can listen the port for any event and send a response to everyone who
 is interested in. Also we create 3 hashes.
 * Pool of users connected to server
 * Rooms which can handle users and an array of rooms
 * Clients which are the users instances
+
 ```ruby
 connections: {
   clients: { client_name: {attributes}, ... },
@@ -100,12 +104,13 @@ def run
 end
 ```
 
-lets get dirty coding TCP code, by the way the and PORT MUST be the same
-in the client side and server side, and in this case should be in the localhost
+lets get dirty coding TCP code, by the way the PORT MUST be the same
+in the client side and server side, and in this case the IP should be "localhost"
+
 ```ruby
 # client side
-server = TCPSocket.open( ip, port )
-client = Client.new( server )
+server = TCPSocket.open( "localhost", 3000 ) # ( ip, port )
+Client.new( server )
 
 # on initialize
 # ask user name
@@ -122,9 +127,10 @@ msg = $stdin.gets.chomp # gets users input from commando line
 ```
 
 on the other hand
+
 ```ruby
 # on initialize
-@server = TCPServer.open( ip, port )
+@server = TCPServer.open( "localhost", 3000 ) # ( ip, port )
 
 # on run method inside loop
 # for each user connected and accepted by server, create a new thread and pass
@@ -137,6 +143,49 @@ Thread.start(@server.accept) do | client |
       Thread.kill self
     end
   end
+  puts "#{nick_name} #{client}"
   @connections[:clients][nick_name] = client
+  client.puts "Connection established, thanks for join!! happy chating"
 end
 ```
+
+our chat is almost finished, but there is one method left for handling
+all the messages between connected users
+
+```ruby
+def listen_user_messages( username, client )
+  loop {
+    # get client messages
+    msg = client.gets.chomp
+    # send a broadcast message, a message for all connected users, but not to
+    # its self
+    @connections[:clients].each do |other_name, other_client|
+      unless other_name == username
+        other_client.puts "#{username.to_s}: #{msg}"
+      end
+    end
+  }
+end
+```
+now, call the method inside our run method in server class
+
+```ruby
+Thread.start(@server.accept) do | client |
+  ...
+  listen_user_messages( nick_name, client )
+end
+```
+
+and there is our little chat, in future articles we are going to build the chat rooms
+for our users.
+
+## Lets see our little chat
+![Simon connection](simon_connection.png "Simon connection")
+![Mateo connection](mateo_connection.png "Mateo connection")
+![server side](server_side.png "server side")
+![Messages1](messages1.png "Messages1")
+![Messages2](messages2.png "Messages2")
+
+### see you later
+## Happy chatting
+[Source Code](https://github.com/sescobb27/Sitepoint/tree/master/RubyChat)
