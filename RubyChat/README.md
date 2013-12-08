@@ -3,9 +3,21 @@ Hi, my name is Simon Escobar and we are going to build a little TCP ruby chat
 using the ruby standard library Socket, I'm using ruby 2.0.0, and Ubuntu
 Linux 12.04LTS, but it should work on Mac OS too, not sure if in windows
 
+First a short overview of what is TCP (Transmission Control Protocol):
+
+> TCP is one of the core protocols of the Internet protocol suite (IP), and is so common that the entire suite is often called TCP/IP.
+
+> Web browsers use TCP when they connect to servers on the World Wide Web, and it is used to deliver email and transfer files from one location to another.
+
+> For deeper information visit [TCP Wikipedia](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)
+
+### This is how our TCP chat is going to work 
+> ![TCP Chat img description](TCP-Chat.png "TCP Chat img description")
+
 First we are going to create the necessary files:
     'server.rb'
     'client.rb'
+
 In server.rb and client.rb we have to require the socket library
 
 ```ruby
@@ -36,9 +48,8 @@ class Server
 end
 ```
 
-The client receive a server instance so it can establish a connection with the server
-then, initialize a request and response instance variables for sending and receiving
-messages.
+The client receive a server instance so it can establish a connection with the server,
+then initialize a request and response objects for send and receive messages.
 
 The server receive a port which is our channel for establishing a connection between
 users, so it can listen the port for any event and send a response to everyone who
@@ -113,6 +124,7 @@ end
 
 lets get dirty coding TCP code, by the way the PORT MUST be the same
 in the client side and server side, and in this case the IP should be "localhost"
+[Brief Description of TCP and UDP](http://agenda.ictp.trieste.it/agenda_links/smr1335/networking/node28.html)
 
 ```ruby
 # client.rb
