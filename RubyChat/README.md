@@ -9,12 +9,14 @@ First we are going to create the necessary files:
 In server.rb and client.rb we have to require the socket library
 
 ```ruby
+# in client.rb and server.rb
 require "socket"
 ```
 then create the respective classes with some attributes to handle users and
 rooms
 
 ```ruby
+# in client.rb
 class Client
   def initialize server
     @server = server
@@ -23,6 +25,7 @@ class Client
   end
 end
 
+# in server.rb
 class Server
   def initialize port, ip
     @server = nil
@@ -45,6 +48,7 @@ is interested in. Also we create 3 hashes.
 * Clients which are the users instances
 
 ```ruby
+# preview of Connections hash
 connections: {
   clients: { client_name: {attributes}, ... },
   rooms: { room_name: [clients_names], ... }
@@ -56,6 +60,7 @@ then we need to create two threads on client side so it can write/read messages 
 time, without this functionality our chat would be a very boring and nasty chat
 
 ```ruby
+# in client.rb
 @request = Thread.new do
   loop { # write how much you want
     # read from the console
@@ -74,6 +79,7 @@ end
 now we are going to build some methods to handle both operations Listen and Write
 
 ```ruby
+# in client.rb
 def listen
   @response = Thread.new do
     loop {
@@ -96,6 +102,7 @@ connected to it, this way we can handle as much users as possible without any co
 problem.
 
 ```ruby
+# in server.rb
 def run
   loop {
     Thread.start do |client| # each client thread
@@ -108,6 +115,8 @@ lets get dirty coding TCP code, by the way the PORT MUST be the same
 in the client side and server side, and in this case the IP should be "localhost"
 
 ```ruby
+# client.rb
+
 # client side
 server = TCPSocket.open( "localhost", 3000 ) # ( ip, port )
 Client.new( server )
@@ -126,15 +135,17 @@ msg = $stdin.gets.chomp # gets users input from commando line
 @server.puts( msg )
 ```
 
-on the other hand
+on the other side
 
 ```ruby
+# in server.rb
+
 # on initialize
 @server = TCPServer.open( "localhost", 3000 ) # ( ip, port )
 
 # on run method inside loop
-# for each user connected and accepted by server, create a new thread and pass
-# client instance to the block
+# for each user connected and accepted by server, it will create a new thread object
+# and which pass the connected client as an instance to the block
 Thread.start(@server.accept) do | client |
   nick_name = client.gets.chomp.to_sym
   @connections[:clients].each do |other_name, other_client|
@@ -153,6 +164,7 @@ our chat is almost finished, but there is one method left for handling
 all the messages between connected users
 
 ```ruby
+# in server.rb
 def listen_user_messages( username, client )
   loop {
     # get client messages
@@ -170,6 +182,7 @@ end
 now, call the method inside our run method in server class
 
 ```ruby
+# in server.rb
 Thread.start(@server.accept) do | client |
   ...
   listen_user_messages( nick_name, client )
