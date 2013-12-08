@@ -26,8 +26,7 @@ In server.rb and client.rb we have to require the
 # in client.rb and server.rb
 require "socket"
 ```
-then create the respective classes with some attributes to handle users and
-rooms
+then create the respective classes with some attributes to handle users and rooms
 
 ```ruby
 # in client.rb
@@ -50,12 +49,9 @@ class Server
 end
 ```
 
-The client receive a server instance so it can establish a connection with the server,
-then initialize a request and response objects for send and receive messages.
+The client receive a server instance so it can establish a connection with the server, then initialize a request and response objects for send and receive messages.
 
-The server receive a port which is our channel for establishing a connection between
-users, so it can listen the port for any event and send a response to everyone who
-is interested in. Also we create 3 hashes.
+The server receive a port which is our channel for establishing a connection between users, so it can listen the port for any event and send a response to everyone who is interested in. Also we create 3 hashes.
 * Pool of users connected to server
 * Rooms which can handle users and an array of rooms
 * Clients which are the users instances
@@ -69,8 +65,7 @@ connections: {
 ```
 this way we can know which user is in which room, so the client name must be unique.
 
-then we need to create two threads on client side so it can write/read messages at the same
-time, without this functionality our chat would be a very boring and nasty chat
+then we need to create two threads on client side so it can write/read messages at the same time, without this functionality our chat would be a very boring and nasty chat
 
 ```ruby
 # in client.rb
@@ -110,9 +105,7 @@ def send
 end
 ```
 
-On server side we need something similar, but we need one thread per each user
-connected to it, this way we can handle as much users as possible without any concurrency
-problem.
+On server side we need something similar, but we need one thread per each user connected to it, this way we can handle as much users as possible without any concurrency problem.
 
 ```ruby
 # in server.rb
@@ -124,8 +117,7 @@ def run
 end
 ```
 
-lets get dirty coding TCP code, by the way the PORT MUST be the same
-in the client side and server side, and in this case the IP should be "localhost"
+by the way the PORT MUST be the same in the client side and server side, and in this case the IP should be "localhost"
 
 > A port is not a physical device, but an abstraction to facilitate communication between a server and a client.
 A machine can have a maximum of 65536 port numbers (ranging from 0 to 65535). The port numbers are divided into three ranges: the Well Known Ports, the Registered Ports, and the Dynamic and/or Private Ports.
@@ -159,13 +151,13 @@ server = TCPSocket.open("localhost", 3000) # (ip, port) in each machine "localho
 Client.new(server)
 ```
 
-in the server side
+In the server side the implementation is quite simple. All we need is finish up with the run method, and verify if the username provided by the user is already taken, if it's, then advice the client with an error message and finish the connection, otherwise advice the client with a successfull connection message.
 
 ```ruby
 # server.rb ( server side )
 class Server
-  def  initialize
-    @server = TCPServer.open( "localhost", 3000 ) # ( ip, port ) in each machine "localhost" = 127.0.0.1
+  def  initialize(port,ip)
+    @server = TCPServer.open(ip, port)
     ...
   end
 
@@ -188,13 +180,12 @@ class Server
     }
   end
 end
-server = Server.new
+server = Server.new("localhost", 3000) # (ip, port) in each machine "localhost" = 127.0.0.1
 server.run
 
 ```
 
-our chat is almost finished, but there is one method left for handling
-all the messages between connected users
+At this moment our chat is almost finished, but there is one method left for handling all the messages between all connected users, without it our users won't be enable to send messages between them
 
 ```ruby
 # in server.rb
@@ -212,7 +203,8 @@ def listen_user_messages(username, client)
   }
 end
 ```
-now, call the method inside our run method in server class
+all ```listen_user_messages``` do is: listen the users messages forever and send them to all the other users.
+Now, call the method inside our run method in server class and that's all folks
 
 ```ruby
 # in server.rb
@@ -226,7 +218,7 @@ def run
 end
 ```
 
-and there is our little chat, in future articles we are going to build the users chat room.
+This is our little chat working on our terminal, in future articles we are going to build the users chat room.
 
 ## Lets see our little chat
 ![Simon connection](simon_connection.png "Simon connection")
