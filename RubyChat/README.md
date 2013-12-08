@@ -18,7 +18,9 @@ First we are going to create the necessary files:
     'server.rb'
     'client.rb'
 
-In server.rb and client.rb we have to require the socket library
+In server.rb and client.rb we have to require the 
+[Socket library](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/Socket.html)
+[Socket Server](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/TCPServer.html)
 
 ```ruby
 # in client.rb and server.rb
@@ -59,7 +61,7 @@ is interested in. Also we create 3 hashes.
 * Clients which are the users instances
 
 ```ruby
-# preview of Connections hash
+# hash Connections preview
 connections: {
   clients: { client_name: {attributes}, ... },
   rooms: { room_name: [clients_names], ... }
@@ -124,51 +126,69 @@ end
 
 lets get dirty coding TCP code, by the way the PORT MUST be the same
 in the client side and server side, and in this case the IP should be "localhost"
-[Brief Description of TCP and UDP](http://agenda.ictp.trieste.it/agenda_links/smr1335/networking/node28.html)
+
+> A port is not a physical device, but an abstraction to facilitate communication between a server and a client.
+A machine can have a maximum of 65536 port numbers (ranging from 0 to 65535). The port numbers are divided into three ranges: the Well Known Ports, the Registered Ports, and the Dynamic and/or Private Ports.
+> [Brief Description of TCP and UDP](http://agenda.ictp.trieste.it/agenda_links/smr1335/networking/node28.html)
 
 ```ruby
-# client.rb
-
-# client side
-server = TCPSocket.open( "localhost", 3000 ) # ( ip, port )
+# client.rb( client side )
+class Client
+  ...
+end
+server = TCPSocket.open( "localhost", 3000 ) # ( ip, port ) in each machine "localhost" = 127.0.0.1
 Client.new( server )
 
-# on initialize
 # ask user name
-listen # call listen method to create the response thread
-send #call send method to create the request thread
+def initialize
+  ...
+  listen # call listen method to create the response thread
+  send #call send method to create the request thread
+end
 
-# on listen inside loop
-msg = @server.gets.chomp # gets the server message
-puts "#{msg}"
+def listen
+  loop {
+    msg = @server.gets.chomp # gets the server message
+    puts "#{msg}"
+  }
+end
 
-# on send loop
-msg = $stdin.gets.chomp # gets users input from commando line
-@server.puts( msg )
+def send
+  loop {
+    msg = $stdin.gets.chomp # gets users input from commando line
+    @server.puts( msg )
+  }
+end
+
 ```
 
-on the other side
+in the server side
 
 ```ruby
-# in server.rb
+# server.rb ( server side )
 
-# on initialize
-@server = TCPServer.open( "localhost", 3000 ) # ( ip, port )
+def  initialize
+  @server = TCPServer.open( "localhost", 3000 ) # ( ip, port ) in each machine "localhost" = 127.0.0.1
+  ...
+end
 
-# on run method inside loop
-# for each user connected and accepted by server, it will create a new thread object
-# and which pass the connected client as an instance to the block
-Thread.start(@server.accept) do | client |
-  nick_name = client.gets.chomp.to_sym
-  @connections[:clients].each do |other_name, other_client|
-    if nick_name == other_name || client == other_client
-      client.puts "This username already exist"
-      Thread.kill self
+def run
+  loop {
+    # for each user connected and accepted by server, it will create a new thread object
+    # and which pass the connected client as an instance to the block
+    Thread.start(@server.accept) do | client |
+      nick_name = client.gets.chomp.to_sym
+      @connections[:clients].each do |other_name, other_client|
+        if nick_name == other_name || client == other_client
+          client.puts "This username already exist"
+          Thread.kill self
+        end
+      end
+      puts "#{nick_name} #{client}"
+      @connections[:clients][nick_name] = client
+      client.puts "Connection established, thanks for join!! happy chating"
     end
-  end
-  puts "#{nick_name} #{client}"
-  @connections[:clients][nick_name] = client
-  client.puts "Connection established, thanks for join!! happy chating"
+  }
 end
 ```
 
@@ -195,14 +215,17 @@ now, call the method inside our run method in server class
 
 ```ruby
 # in server.rb
-Thread.start(@server.accept) do | client |
-  ...
-  listen_user_messages( nick_name, client )
+def run
+  loop {
+    Thread.start(@server.accept) do | client |
+      ...
+      listen_user_messages( nick_name, client )
+    end
+  }
 end
 ```
 
-and there is our little chat, in future articles we are going to build the chat rooms
-for our users.
+and there is our little chat, in future articles we are going to build the users chat room.
 
 ## Lets see our little chat
 ![Simon connection](simon_connection.png "Simon connection")
@@ -211,6 +234,10 @@ for our users.
 ![Messages1](messages1.png "Messages1")
 ![Messages2](messages2.png "Messages2")
 
+### Next steps
+[Tutorialspoint](http://www.tutorialspoint.com/ruby/ruby_socket_programming.htm)
+[TCP Sockets book](http://www.jstorimer.com/products/working-with-tcp-sockets)
+
 ### see you later
-## Happy chatting
+## Happy Coding
 [Source Code](https://github.com/sescobb27/Sitepoint/tree/master/RubyChat)
