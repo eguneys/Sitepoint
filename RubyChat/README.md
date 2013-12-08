@@ -236,9 +236,8 @@ and there is our little chat, in future articles we are going to build the users
 ![Messages2](messages2.png "Messages2")
 
 ### Next steps
-[Tutorialspoint](http://www.tutorialspoint.com/ruby/ruby_socket_programming.htm)
-[TCP Sockets book](http://www.jstorimer.com/products/working-with-tcp-sockets)
+* [Tutorialspoint](http://www.tutorialspoint.com/ruby/ruby_socket_programming.htm)
+* [TCP Sockets book](http://www.jstorimer.com/products/working-with-tcp-sockets)
 
-### see you later
-## Happy Coding
+## see you later, Happy Coding
 [Source Code](https://github.com/sescobb27/Sitepoint/tree/master/RubyChat)
