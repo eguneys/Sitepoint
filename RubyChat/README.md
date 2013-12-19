@@ -14,6 +14,9 @@ First a short overview of what is TCP (Transmission Control Protocol):
 ### This is how our TCP chat is going to work 
 > ![TCP Chat img description](TCP-Chat.png "TCP Chat img description")
 
+Primero crearemos un servidor que es el que nos recibira las conexiones de los clientes y los alamacenara en diccionarios de datos para saber en que sala se encuentra, recibir sus mensajes y retransmitirlos a los otros usuarios. en este caso no almacenaremos los mensajes en una base de datos, pero claro que se puede hacer.
+Ya con el servidor creado se empiezan a crear en terminales diferentes los distintos clientes, cada uno de ellos con un nombre de usuario distinto, el cual sera nuesta clave para buscarlo en nuestras salas de chat disponibles.
+
 First we are going to create the necessary files:
     'server.rb'
     'client.rb'
@@ -30,6 +33,7 @@ then create the respective classes with some attributes to handle users and room
 
 ```ruby
 # in client.rb
+require "socket"
 class Client
   def initialize(server)
     @server = server
@@ -37,8 +41,13 @@ class Client
     @response = nil
   end
 end
+```
+The client receive a server instance so it can establish a connection with the server, then initialize a request and response objects for send and receive messages. en este caso response y request son nulos pues mas adelante veremos como hacer 2 hilos y asignarselos para escuchar y escribir mensajes de manera independiente
 
+
+```ruby
 # in server.rb
+require "socket"
 class Server
   def initialize(port, ip)
     @server = nil
@@ -48,13 +57,11 @@ class Server
   end
 end
 ```
-
-The client receive a server instance so it can establish a connection with the server, then initialize a request and response objects for send and receive messages.
-
 The server receive a port which is our channel for establishing a connection between users, so it can listen the port for any event and send a response to everyone who is interested in. Also we create 3 hashes.
-* Pool of users connected to server
-* Rooms which can handle users and an array of rooms
-* Clients which are the users instances
+* Pool of users connected to server: @connections
+* Rooms which can handle users and an array of rooms: @rooms
+* Clients which are the users instances: @clients
+this way we can know which user is in which room, so the client name (username) must be unique.
 
 ```ruby
 # hash Connections preview
@@ -63,9 +70,8 @@ connections: {
   rooms: { room_name: [clients_names], ... }
 }
 ```
-this way we can know which user is in which room, so the client name must be unique.
 
-then we need to create two threads on client side so it can write/read messages at the same time, without this functionality our chat would be a very boring and nasty chat
+then we need to create two threads on client side so it can write/read messages at the same time, without this functionality our chat would be a very boring and nasty
 
 ```ruby
 # in client.rb
@@ -117,11 +123,16 @@ def run
 end
 ```
 
-by the way the PORT MUST be the same in the client side and server side, and in this case the IP should be "localhost"
+by the way the PORT MUST be the same in the client side and server side and in this case the IP should be "localhost" which means "127.0.0.1"
 
 > A port is not a physical device, but an abstraction to facilitate communication between a server and a client.
 A machine can have a maximum of 65536 port numbers (ranging from 0 to 65535). The port numbers are divided into three ranges: the Well Known Ports, the Registered Ports, and the Dynamic and/or Private Ports.
 > [Brief Description of TCP and UDP](http://agenda.ictp.trieste.it/agenda_links/smr1335/networking/node28.html)
+
+Luego implementaremos como recibir los mensajes desde/hacia el servidor con los metodos "get" y "puts" y limpiaremos
+todos los caracteres extra al final de ellos tales como el final de linea, tabs entre otros.
+> get means read all messages from server
+> puts means write all messges to server
 
 ```ruby
 # client.rb( client side )
@@ -129,21 +140,22 @@ class Client
   # ask user name
   def initialize(server)
     ...
-    listen # call listen method to create the response thread
+    listen #call listen method to create the response thread
     send #call send method to create the request thread
   end
 
   def listen
     loop {
       msg = @server.gets.chomp # gets the server message
-      puts "#{msg}"
+      puts "#{msg}" # write the output to the user's shell
     }
   end
 
   def send
     loop {
+      # $stdin means standard input (Shell input or Command input)
       msg = $stdin.gets.chomp # gets users input from commando line
-      @server.puts( msg )
+      @server.puts( msg ) # write all the user messages to the server
     }
   end
 end
