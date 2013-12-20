@@ -14,16 +14,17 @@ First a short overview of what is TCP (Transmission Control Protocol):
 ### This is how our TCP chat is going to work 
 > ![TCP Chat img description](TCP-Chat.png "TCP Chat img description")
 
-Primero crearemos un servidor que es el que nos recibira las conexiones de los clientes y los alamacenara en diccionarios de datos para saber en que sala se encuentra, recibir sus mensajes y retransmitirlos a los otros usuarios. en este caso no almacenaremos los mensajes en una base de datos, pero claro que se puede hacer.
-Ya con el servidor creado se empiezan a crear en terminales diferentes los distintos clientes, cada uno de ellos con un nombre de usuario distinto, el cual sera nuesta clave para buscarlo en nuestras salas de chat disponibles.
+
+First we will create a server which receive client's connections and stored them in data dictionaries to find out in which room is located, receive messages and relay them to other users. At the moment we won't store messages in a database, but of course you can do.
+Already created the server all the users can be created in different terminals, each with different username, which will be our primary key to look at on our available chat rooms.
 
 First we are going to create the necessary files:
     'server.rb'
     'client.rb'
 
 In server.rb and client.rb we have to require the 
-[Socket library](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/Socket.html)
-[Socket Server](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/TCPServer.html)
+> * [Socket library](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/Socket.html)
+* [Socket Server](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/TCPServer.html)
 
 ```ruby
 # in client.rb and server.rb
@@ -42,8 +43,12 @@ class Client
   end
 end
 ```
-The client receive a server instance so it can establish a connection with the server, then initialize a request and response objects for send and receive messages. en este caso response y request son nulos pues mas adelante veremos como hacer 2 hilos y asignarselos para escuchar y escribir mensajes de manera independiente
 
+The client receive a server instance so it can establish a connection with the server, then initialize a request and response objects for send and receive messages through the server. At this moment our @response and @request objects are null, but later on  we are going to build 2 threads and assign them to our objects to write and read at the same time.
+if you don't know or want to know more on threads stuff you can go to:
+> * [Sitepoint Threads in Ruby](http://www.sitepoint.com/threads-ruby)
+* [Ruby Threads](http://ruby-doc.org/core-2.0.0/Thread.html)
+* [Ruby Multithreading](http://www.tutorialspoint.com/ruby/ruby_multithreading.htm)
 
 ```ruby
 # in server.rb
@@ -71,7 +76,7 @@ connections: {
 }
 ```
 
-then we need to create two threads on client side so it can write/read messages at the same time, without this functionality our chat would be a very boring and nasty
+then we need to create two threads on client side so it can write/read messages at the same time, without this functionality our chat would be a very boring, imagine you writing and then listening for any answer without the posibility to be doing both actions at the same time, this is how all chats work basically.
 
 ```ruby
 # in client.rb
@@ -129,10 +134,11 @@ by the way the PORT MUST be the same in the client side and server side and in t
 A machine can have a maximum of 65536 port numbers (ranging from 0 to 65535). The port numbers are divided into three ranges: the Well Known Ports, the Registered Ports, and the Dynamic and/or Private Ports.
 > [Brief Description of TCP and UDP](http://agenda.ictp.trieste.it/agenda_links/smr1335/networking/node28.html)
 
+
 Luego implementaremos como recibir los mensajes desde/hacia el servidor con los metodos "get" y "puts" y limpiaremos
 todos los caracteres extra al final de ellos tales como el final de linea, tabs entre otros.
-> get means read all messages from server
-> puts means write all messges to server
+> * get means read all messages from server
+* puts means write all messges to server
 
 ```ruby
 # client.rb( client side )
