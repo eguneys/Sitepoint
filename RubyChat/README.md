@@ -1,7 +1,7 @@
 # TCP Ruby Chat
 Hi, my name is Simon Escobar and we are going to build a little TCP ruby chat
 using the ruby standard library Socket, I'm using ruby 2.0.0, and Ubuntu
-Linux 12.04LTS, but it should work on Mac OS too, not sure if in windows
+Linux 12.04LTS, it should work on Mac OS too, but I’m not sure if it works in Windows.
 
 First a short overview of what is TCP (Transmission Control Protocol):
 
@@ -9,16 +9,16 @@ First a short overview of what is TCP (Transmission Control Protocol):
 
 > Web browsers use TCP when they connect to servers on the World Wide Web, and it is used to deliver email and transfer files from one location to another.
 
-> For deeper information visit [TCP Wikipedia](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)
+> For more detaled information visit [TCP Wikipedia](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)
 
-### This is how our TCP chat is going to work 
+### This is how our TCP chat is going to work
 > ![TCP Chat img description](TCP-Chat.png "TCP Chat img description")
 
 First we are going to create the necessary files:
     'server.rb'
     'client.rb'
 
-In server.rb and client.rb we have to require the 
+In server.rb and client.rb we have to require the
 [Socket library](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/Socket.html)
 [Socket Server](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/TCPServer.html)
 
