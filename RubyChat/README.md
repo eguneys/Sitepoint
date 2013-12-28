@@ -21,6 +21,7 @@ First we are going to create the necessary files:
     'client.rb'
 
 In server.rb and client.rb we have to require the
+
 > * [Socket library](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/Socket.html)
 * [Socket Server](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/TCPServer.html)
 
