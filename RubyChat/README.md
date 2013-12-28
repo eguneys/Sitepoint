@@ -1,7 +1,7 @@
 # TCP Ruby Chat
 Hi, my name is Simon Escobar and we are going to build a little TCP ruby chat
 using the ruby standard library Socket, I'm using ruby 2.0.0, and Ubuntu
-Linux 12.04LTS, but it should work on Mac OS too, not sure if in windows
+Linux 12.04LTS, it should work on Mac OS too, but I’m not sure if it works in Windows.
 
 First a short overview of what is TCP (Transmission Control Protocol):
 
@@ -9,20 +9,18 @@ First a short overview of what is TCP (Transmission Control Protocol):
 
 > Web browsers use TCP when they connect to servers on the World Wide Web, and it is used to deliver email and transfer files from one location to another.
 
-> For deeper information visit [TCP Wikipedia](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)
+> For more detaled information visit [TCP Wikipedia](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)
 
-### This is how our TCP chat is going to work 
+### This is how our TCP chat is going to work
 > ![TCP Chat img description](TCP-Chat.png "TCP Chat img description")
 
-
-First we will create a server which receive client's connections and stored them in data dictionaries to find out in which room is located, receive messages and relay them to other users. At the moment we won't store messages in a database, but of course you can do.
-Already created the server all the users can be created in different terminals, each with different username, which will be our primary key to look at on our available chat rooms.
+First we will create a server which receives the client's connections and stores them in data dictionaries to find out what room they’re located in, receive messages and relay them to other users. Right now we aren’t going to store messages in a database, but it’s possible. We already created the server where the users can be created in different terminals, each with a different username, which will be our primary key to look at on our available chat rooms.
 
 First we are going to create the necessary files:
     'server.rb'
     'client.rb'
 
-In server.rb and client.rb we have to require the 
+In server.rb and client.rb we have to require the
 > * [Socket library](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/Socket.html)
 * [Socket Server](http://www.ruby-doc.org/stdlib-2.0.0/libdoc/socket/rdoc/TCPServer.html)
 
@@ -44,8 +42,8 @@ class Client
 end
 ```
 
-The client receive a server instance so it can establish a connection with the server, then initialize a request and response objects for send and receive messages through the server. At this moment our @response and @request objects are null, but later on  we are going to build 2 threads and assign them to our objects to write and read at the same time.
-if you don't know or want to know more on threads stuff you can go to:
+The client receives a server instance so it can establish a connection with the server, then initialize a request and response to send and receive messages through the server. Right now our @response and @request objects are null, but later on we are going to build two threads and assign them to our objects to read and write at the same time.
+If you don't know or want to know more on threads you can go to:
 > * [Sitepoint Threads in Ruby](http://www.sitepoint.com/threads-ruby)
 * [Ruby Threads](http://ruby-doc.org/core-2.0.0/Thread.html)
 * [Ruby Multithreading](http://www.tutorialspoint.com/ruby/ruby_multithreading.htm)
@@ -62,11 +60,11 @@ class Server
   end
 end
 ```
-The server receive a port which is our channel for establishing a connection between users, so it can listen the port for any event and send a response to everyone who is interested in. Also we create 3 hashes.
+The server receives a port which will be our channel for establishing a connection between users, so it can listen to the port for any event and send a response to everyone who is interested. Then we’ll create 3 hashes.
 * Pool of users connected to server: @connections
 * Rooms which can handle users and an array of rooms: @rooms
 * Clients which are the users instances: @clients
-this way we can know which user is in which room, so the client name (username) must be unique.
+this way we can know which user is in which room, so the client name/username must be unique.
 
 ```ruby
 # hash Connections preview
@@ -76,14 +74,14 @@ connections: {
 }
 ```
 
-then we need to create two threads on client side so it can write/read messages at the same time, without this functionality our chat would be a very boring, imagine you writing and then listening for any answer without the posibility to be doing both actions at the same time, this is how all chats work basically.
+Then we need to create two threads on the client side so it can read/write messages at the same time. Without this functionality our chat would be very boring. Imagine typing your message and only after finishing being able to look for an answer without the posibility of doing both at the same time. This is how chats work basically.
 
 ```ruby
 # in client.rb
 @request = Thread.new do
-  loop { # write how much you want
+  loop { # write as much as you want
     # read from the console
-    # when enter, send the message to the server
+    # with the enter key, send the message to the server
   }
 end
 
@@ -95,7 +93,7 @@ end
 end
 ```
 
-now we are going to build some methods to handle both operations Listen and Write
+Now we are going to build some methods to handle both listening and writing.
 
 ```ruby
 # in client.rb
@@ -116,7 +114,7 @@ def send
 end
 ```
 
-On server side we need something similar, but we need one thread per each user connected to it, this way we can handle as much users as possible without any concurrency problem.
+On the server side we need something similar, but we need one thread per connected user, so that we can handle as many users as possible without any problems with concurrency.
 
 ```ruby
 # in server.rb
@@ -128,15 +126,14 @@ def run
 end
 ```
 
-by the way the PORT MUST be the same in the client side and server side and in this case the IP should be "localhost" which means "127.0.0.1"
+The port MUST be the same on the client and server side and in this case the IP should be "localhost" which means "127.0.0.1"
 
 > A port is not a physical device, but an abstraction to facilitate communication between a server and a client.
 A machine can have a maximum of 65536 port numbers (ranging from 0 to 65535). The port numbers are divided into three ranges: the Well Known Ports, the Registered Ports, and the Dynamic and/or Private Ports.
 > [Brief Description of TCP and UDP](http://agenda.ictp.trieste.it/agenda_links/smr1335/networking/node28.html)
 
 
-Luego implementaremos como recibir los mensajes desde/hacia el servidor con los metodos "get" y "puts" y limpiaremos
-todos los caracteres extra al final de ellos tales como el final de linea, tabs entre otros.
+Later we’ll implement how to recieve messages to/from  the server with the two methods “get” and “puts” and then we’ll clean up all of the extra characters at the end like, the end of the line, tabs, among others.
 > * get means read all messages from server
 * puts means write all messges to server
 
@@ -160,7 +157,7 @@ class Client
   def send
     loop {
       # $stdin means standard input (Shell input or Command input)
-      msg = $stdin.gets.chomp # gets users input from commando line
+      msg = $stdin.gets.chomp # gets users input from command line
       @server.puts( msg ) # write all the user messages to the server
     }
   end
@@ -169,7 +166,7 @@ server = TCPSocket.open("localhost", 3000) # (ip, port) in each machine "localho
 Client.new(server)
 ```
 
-In the server side the implementation is quite simple. All we need is finish up with the run method, and verify if the username provided by the user is already taken, if it's, then advice the client with an error message and finish the connection, otherwise advice the client with a successfull connection message.
+On the server side the implementation is quite simple. All we need now is to finish up with the run method, and verify if the username provided by the user is already taken. If it is, then tell the client with an error message and finish the connection. If it is sucessful  then tell the client with a successfull connection message.
 
 ```ruby
 # server.rb ( server side )
@@ -193,7 +190,7 @@ class Server
         end
         puts "#{nick_name} #{client}"
         @connections[:clients][nick_name] = client
-        client.puts "Connection established, thanks for join!! happy chating"
+        client.puts "Connection established, Thank you for joining! Happy chatting"
       end
     }
   end
@@ -203,7 +200,7 @@ server.run
 
 ```
 
-At this moment our chat is almost finished, but there is one method left for handling all the messages between all connected users, without it our users won't be enable to send messages between them
+Right now our chat is almost finished, but there is one method left for handling all the messages between all connected users. Without it, our users won't be enable to send messages between them.
 
 ```ruby
 # in server.rb
@@ -211,8 +208,7 @@ def listen_user_messages(username, client)
   loop {
     # get client messages
     msg = client.gets.chomp
-    # send a broadcast message, a message for all connected users, but not to
-    # its self
+    # send a broadcast message, a message for all connected users, but not to its self
     @connections[:clients].each do |other_name, other_client|
       unless other_name == username
         other_client.puts "#{username.to_s}: #{msg}"
@@ -221,8 +217,7 @@ def listen_user_messages(username, client)
   }
 end
 ```
-all ```listen_user_messages``` do is: listen the users messages forever and send them to all the other users.
-Now, call the method inside our run method in server class and that's all folks
+all the ```listen_user_messages``` method does is: listen to the users messages always and sends them to all the other users. Now, call the method inside our run method in server class and that's it.
 
 ```ruby
 # in server.rb
@@ -236,7 +231,7 @@ def run
 end
 ```
 
-This is our little chat working on our terminal, in future articles we are going to build the users chat room.
+This is our chat working on the terminal, in future articles we are going to build the users’ chat room.
 
 ## Lets see our little chat
 ![Simon connection](simon_connection.png "Simon connection")
@@ -249,5 +244,5 @@ This is our little chat working on our terminal, in future articles we are going
 * [Tutorialspoint](http://www.tutorialspoint.com/ruby/ruby_socket_programming.htm)
 * [TCP Sockets book](http://www.jstorimer.com/products/working-with-tcp-sockets)
 
-## see you later, Happy Coding
+## Happy Coding!
 [Source Code](https://github.com/sescobb27/Sitepoint/tree/master/RubyChat)
