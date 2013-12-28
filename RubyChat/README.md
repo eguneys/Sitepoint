@@ -235,13 +235,21 @@ end
 This is our chat working on the terminal, in future articles we are going to build the users’ chat room.
 
 ## Lets see our little chat
+#### initialize server
 ![server side](Server1.png "server side")
+#### initialize client Simon
 ![Messages1](ClientConn1.png "Messages1")
+#### initialize client Foo
 ![Messages2](ClientConn2.png "Messages2")
+#### Message from Simon to Foo
 ![Messages2](ClientMSG1.png "Messages2")
+#### Message recieved From Simon
 ![Messages2](ClientMSG2.png "Messages2")
+#### Message from Foo to Simon
 ![Messages2](ClientMSG3.png "Messages2")
+#### Message recieved From Foo
 ![Messages2](ClientMSG4.png "Messages2")
+#### Server-Client Connections
 ![server side](Server2.png "server side")
 
 ### Next steps
