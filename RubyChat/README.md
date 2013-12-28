@@ -235,11 +235,14 @@ end
 This is our chat working on the terminal, in future articles we are going to build the users’ chat room.
 
 ## Lets see our little chat
-![Simon connection](simon_connection.png "Simon connection")
-![Mateo connection](mateo_connection.png "Mateo connection")
-![server side](server_side.png "server side")
-![Messages1](messages1.png "Messages1")
-![Messages2](messages2.png "Messages2")
+![server side](Server1.png "server side")
+![Messages1](ClientConn1.png "Messages1")
+![Messages2](ClientConn2.png "Messages2")
+![Messages2](ClientMSG1.png "Messages2")
+![Messages2](ClientMSG2.png "Messages2")
+![Messages2](ClientMSG3.png "Messages2")
+![Messages2](ClientMSG4.png "Messages2")
+![server side](Server2.png "server side")
 
 ### Next steps
 * [Tutorialspoint](http://www.tutorialspoint.com/ruby/ruby_socket_programming.htm)
