@@ -13,10 +13,8 @@ class Client
 
   def listen
     @response = Thread.new do
-      loop { # listen for ever
-        # listen the server responses
-        msg = @server.gets.chomp # gets the server messages
-        # show them in the console
+      loop {
+        msg = @server.gets.chomp
         puts "#{msg}"
       }
     end
@@ -25,10 +23,8 @@ class Client
   def send
     puts "Enter the username:"
     @request = Thread.new do
-      loop {# write how much you want
-        # read from the console
-        msg = $stdin.gets.chomp # gets users input from command line
-        # when enter, send the message to the server
+      loop {
+        msg = $stdin.gets.chomp
         @server.puts( msg )
       }
     end
